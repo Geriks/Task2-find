@@ -1,33 +1,37 @@
-import org.junit.jupiter.api.Test
-
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.assertThrows
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
 
 
 internal class MainKtTest {
 
-    @Test
-    fun main() {
-        try {
-            arrayOf("")
-        } catch (e:Exception){
-            println("Не задано имя файла")}
-        try {
-            arrayOf("-abcd")
-        } catch (e:Exception){
-            println("Неизвестный аргумент")}
-        try {
-            arrayOf("abcd -d Testolder\\testfolder1")
-        } catch (e:Exception){
-            println("Файл не найден")
-        }
+    private val out = ByteArrayOutputStream()
+    private val originOut = System.out
+    private val sep = System.lineSeparator()
+
+    @BeforeEach
+    fun initConsole() {
+        System.setOut(PrintStream(out))
+    }
+
+    @AfterEach
+    fun afterConsole(){
+        System.setOut(originOut)
     }
 
     @Test
     fun searchFile() {
-        assertEquals("""src\main\kotlin\main.kt - main.kt""",searchFile("main.kt", File("src\\main\\kotlin"),true))
-        assertEquals("""src\main\kotlin\main.kt - main.kt""",searchFile("main.kt",File("src\\main\\kotlin"),false))
-        assertEquals(""".\Testfile - Testfile""",searchFile("Testfile", File("."),false))
+
+        searchFile("main.kt", File("src\\main\\kotlin"),true)
+        assertEquals("src\\main\\kotlin\\main.kt - main.kt$sep",out.toString())
+        out.reset()
+        searchFile("main.kt",File("src\\main\\kotlin"),false)
+        assertEquals("src\\main\\kotlin\\main.kt - main.kt$sep",out.toString())
+        out.reset()
+        searchFile("Testfile", File("."),false)
+        assertEquals(".\\Testfile - Testfile$sep",out.toString())
+        out.reset()
     }
 }

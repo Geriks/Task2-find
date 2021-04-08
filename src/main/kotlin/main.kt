@@ -1,6 +1,4 @@
-
 import java.io.File
-import java.lang.Error
 import kotlin.system.exitProcess
 
 //Поиск файла(ов) с заданным в командной строке именем в указанной ключом -d директории,
@@ -36,29 +34,22 @@ fun main(args : Array<String>) {
 }
 
 
-fun searchFile(name: String,path: File,recursive: Boolean): String{
-    val directoryFile = path.listFiles() ?: null
+fun searchFile(name: String,path: File,recursive: Boolean){
+    val directoryFile = path.listFiles()
     if (recursive) {
         if (path.isDirectory) {
             if (directoryFile != null) {
                 for (i in directoryFile) {
                     if (i.isDirectory)
                         searchFile(name, path, true)
-                    if (name == i.name){
-                        println(i.path + " - " + name)
-                        return "${i.path} - $name"
-                    }
+                    if (name == i.name) println(i.path + " - " + name)
                 }
             }
         }
     } else {
         if (directoryFile != null) {
             for (i in directoryFile)
-                if (name == i.name) {
-                    println(i.path + " - " + name)
-                    return "${i.path} - $name"
-                }
+                if (name == i.name) println(i.path + " - " + name)
         }
     }
-    throw error("Файл не найден")
 }
